@@ -267,6 +267,15 @@ if [ "${LIMA_INSTALL_NERDCTL}" == "true" ]; then
         cp "${tmp}/nerdctl/bin/${bin}" "${tmp}/usr/local/bin/${bin}"
         chmod u+s "${tmp}/usr/local/bin/${bin}"
     done
+    if [ "${LIMA_INSTALL_NERDCTL_LIBEXEC}" == "true" ]; then
+        LIBEXEC=/usr/local/libexec/nerdctl
+        mkdir -p "${tmp}${LIBEXEC}"
+        mv "${tmp}/usr/local/bin/nerdctl" "${tmp}${LIBEXEC}"
+        makefile root:root 0755 "${tmp}/usr/local/bin/nerdctl" << EOF
+#!/bin/sh
+exec ${LIBEXEC}/nerdctl "\$@"
+EOF
+    fi
 fi
 
 if [ "${LIMA_INSTALL_OPENRESTY}" == "true" ]; then
