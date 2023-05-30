@@ -231,6 +231,10 @@ if [ "${LIMA_INSTALL_CNI_PLUGIN_FLANNEL}" == "true" ]; then
     ln -s "flannel-${ARCH}" "${tmp}/usr/libexec/cni/flannel"
 fi
 
+if [ "${LIMA_INSTALL_CTR}" == "true" ]; then
+    echo "containerd-ctr" >> "$tmp"/etc/apk/world
+fi
+
 if [ "${LIMA_INSTALL_CURL}" == "true" ]; then
     echo "curl" >> "$tmp"/etc/apk/world
 fi

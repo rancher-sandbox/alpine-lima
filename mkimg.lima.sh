@@ -29,6 +29,9 @@ profile_lima() {
         if [ "${LIMA_INSTALL_CNI_PLUGIN_FLANNEL}" == "true" ]; then
             apks="$apks cni-plugin-flannel"
         fi
+        if [ "${LIMA_INSTALL_CTR}" == "true" ]; then
+            apks="$apks containerd-ctr"
+        fi
         if [ "${LIMA_INSTALL_CURL}" == "true" ]; then
             apks="$apks curl"
         fi
