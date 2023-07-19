@@ -217,7 +217,7 @@ if [ "${LIMA_INSTALL_CA_CERTIFICATES}" == "true" ]; then
     echo "ca-certificates" >> "$tmp"/etc/apk/world
 fi
 
-if [ "${LIMA_INSTALL_CNI_PLUGINS}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL}" == "true" ]; then
+if [ "${LIMA_INSTALL_CNI_PLUGINS}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
     echo "cni-plugins" >> "$tmp"/etc/apk/world
 fi
 
@@ -258,7 +258,7 @@ if [ "${LIMA_INSTALL_LOGROTATE}" == "true" ]; then
     echo "logrotate" >> "$tmp"/etc/apk/world
 fi
 
-if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL}" == "true" ]; then
+if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
     echo "iptables ip6tables" >> "$tmp"/etc/apk/world
 fi
 
@@ -266,9 +266,9 @@ if [ "${LIMA_INSTALL_MKCERT}" == "true" ]; then
     echo "mkcert" >> "$tmp"/etc/apk/world
 fi
 
-if [ "${LIMA_INSTALL_NERDCTL}" == "true" ]; then
+if [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
     mkdir -p "${tmp}/nerdctl"
-    tar xz -C "${tmp}/nerdctl" -f /home/build/nerdctl.tar.gz
+    tar xz -C "${tmp}/nerdctl" -f /home/build/nerdctl-full.tar.gz
 
     mkdir -p "${tmp}/usr/local/bin/"
     for bin in buildctl buildkitd nerdctl; do
@@ -300,6 +300,10 @@ fi
 
 if [ "${LIMA_INSTALL_ZSTD}" == "true" ]; then
     echo "zstd" >> "$tmp"/etc/apk/world
+fi
+
+if [ "${LIMA_INSTALL_TINI}" == "true" ]; then
+    echo "tini" >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_CRI_DOCKERD}" == "true" ]; then
