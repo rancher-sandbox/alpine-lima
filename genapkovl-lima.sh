@@ -32,6 +32,10 @@ makefile root:root 0644 "$tmp"/etc/hostname <<EOF
 $HOSTNAME
 EOF
 
+if [ "$LIMA_CGROUP_MODE" != "hybrid" ]; then
+    sed -E "s/#(rc_cgroup_mode).*/\1=\"$LIMA_CGROUP_MODE\"/" /etc/rc.conf >"$tmp"/etc/rc.conf
+fi
+
 mkdir -p "$tmp"/etc/network
 makefile root:root 0644 "$tmp"/etc/network/interfaces <<EOF
 auto lo
