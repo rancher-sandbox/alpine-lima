@@ -22,6 +22,7 @@ ARCH_ALIAS_aarch64 = arm64
 ARCH_ALIAS = $(shell echo "$(ARCH_ALIAS_$(ARCH))")
 
 NERDCTL_VERSION=1.5.0
+BUILDKIT_VERSION=0.11.6
 QEMU_VERSION=v7.0.0
 CRI_DOCKERD_VERSION=0.2.6
 CRI_DOCKERD_ORG=Mirantis
@@ -42,19 +43,27 @@ mkimage: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
 		.
 
 .PHONY: iso
-iso: nerdctl-full-$(NERDCTL_VERSION)-$(ARCH) qemu-$(QEMU_VERSION)-copying cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH)
-	ALPINE_VERSION=$(ALPINE_VERSION) NERDCTL_VERSION=$(NERDCTL_VERSION) QEMU_VERSION=$(QEMU_VERSION) CRI_DOCKERD_VERSION=$(CRI_DOCKERD_VERSION) REPO_VERSION=$(REPO_VERSION) EDITION=$(EDITION) BUILD_ID=$(BUILD_ID) ARCH=$(ARCH) ARCH_ALIAS=$(ARCH_ALIAS) ./build.sh
+iso:
+	ALPINE_VERSION=$(ALPINE_VERSION) NERDCTL_VERSION=$(NERDCTL_VERSION) BUILDKIT_VERSION=$(BUILDKIT_VERSION) QEMU_VERSION=$(QEMU_VERSION) CRI_DOCKERD_VERSION=$(CRI_DOCKERD_VERSION) REPO_VERSION=$(REPO_VERSION) EDITION=$(EDITION) BUILD_ID=$(BUILD_ID) ARCH=$(ARCH) ARCH_ALIAS=$(ARCH_ALIAS) ./build.sh
 
 
+iso: nerdctl-full-$(NERDCTL_VERSION)-$(ARCH)
 nerdctl-full-$(NERDCTL_VERSION)-$(ARCH):
 	curl -o $@ -Ls https://github.com/containerd/nerdctl/releases/download/v$(NERDCTL_VERSION)/nerdctl-full-$(NERDCTL_VERSION)-linux-$(ARCH_ALIAS).tar.gz
 
+iso: buildkit-v$(BUILDKIT_VERSION)-$(ARCH).tar.gz
+buildkit-v$(BUILDKIT_VERSION)-$(ARCH).tar.gz:
+	curl -o $@ -Ls https://github.com/moby/buildkit/releases/download/v$(BUILDKIT_VERSION)/buildkit-v$(BUILDKIT_VERSION).linux-$(ARCH_ALIAS).tar.gz
+
+iso: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
 openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar:
 	curl -o $@ -Ls https://github.com/rancher-sandbox/openresty-packaging/releases/download/v$(OPENRESTY_VERSION)/$@
 
+iso: qemu-$(QEMU_VERSION)-copying
 qemu-$(QEMU_VERSION)-copying:
 	curl -o $@ -Ls https://raw.githubusercontent.com/qemu/qemu/$(QEMU_VERSION)/COPYING
 
+iso: cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH)
 cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH):
 	curl -o $@ -Ls https://github.com/$(CRI_DOCKERD_ORG)/cri-dockerd/releases/download/v$(CRI_DOCKERD_VERSION)/cri-dockerd-$(CRI_DOCKERD_VERSION).$(ARCH_ALIAS).tgz
 	curl -o $@.LICENSE -Ls https://raw.githubusercontent.com/$(CRI_DOCKERD_ORG)/cri-dockerd/v$(CRI_DOCKERD_VERSION)/LICENSE
