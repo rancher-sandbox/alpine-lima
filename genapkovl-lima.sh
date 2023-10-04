@@ -162,35 +162,8 @@ if [ "${LIMA_VARIANT_ID}" == "rd" ]; then
     # See also https://github.com/moby/buildkit/issues/4108
     # We override /etc/init.d/cgroups to create a hybrid-style cgroups mount
     # but without the "openrc" hierachy.
-    cat > "$tmp"/etc/init.d/cgroups <<-"EOF"
-	#!/sbin/openrc-run
-	cgroup_opts=nodev,noexec,nosuid
-	depend() {
-	    keyword -docker -prefix -systemd-nspawn -vserver
-	    after sysfs
-	}
-	start() {
-	    # Set up cgroups in hybrid mode
-	    if ! mountinfo --quiet /sys/fs/cgroup; then
-	        mount -n -t tmpfs -o "${cgroup_opts}" cgroup_root /sys/fs/cgroup
-	    fi
-	    mkdir -p /sys/fs/cgroup/unified
-	    if ! mountinfo --quiet /sys/fs/cgroup/unified; then
-	        mount -t cgroup2 none -o "${cgroup_opts},nsdelegate" /sys/fs/cgroup/unified
-	    fi
-	    while read -r name _ _ enabled _; do
-	        if [ "${enabled}" != "1" ]; then
-	            continue
-	        fi
-	        mountinfo --quiet "/sys/fs/cgroup/${name}" && continue
-	        mkdir -p "/sys/fs/cgroup/${name}"
-	        if ! mountinfo --quiet "/sys/fs/cgroup/${name}"; then
-	            mount -n -t cgroup -o "${cgroup_opts},${name}" "${name}" "/sys/fs/cgroup/${name}"
-	        fi
-	    done </proc/cgroups
-	}
-	EOF
-    chmod a+x "$tmp"/etc/init.d/cgroups
+    cp /home/build/cgroups.openrc "${tmp}/etc/init.d/cgroups"
+    chmod a+x "${tmp}/etc/init.d/cgroups"
 fi
 
 if [ "${LIMA_INSTALL_DOCKER}" == "true" ]; then
