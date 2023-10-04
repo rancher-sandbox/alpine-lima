@@ -157,6 +157,15 @@ if [ "${LIMA_INSTALL_CLOUD_UTILS_GROWPART}" == "true" ]; then
     echo partx >> "$tmp"/etc/apk/world
 fi
 
+if [ "${LIMA_VARIANT_ID}" == "rd" ]; then
+    # XXX HACK: Don't create OpenRC cgroups namespace; it breaks buildkit 0.12+
+    # See also https://github.com/moby/buildkit/issues/4108
+    # We override /etc/init.d/cgroups to create a hybrid-style cgroups mount
+    # but without the "openrc" hierachy.
+    cp /home/build/cgroups.openrc "${tmp}/etc/init.d/cgroups"
+    chmod a+x "${tmp}/etc/init.d/cgroups"
+fi
+
 if [ "${LIMA_INSTALL_DOCKER}" == "true" ]; then
     echo libseccomp >> "$tmp"/etc/apk/world
     echo runc >> "$tmp"/etc/apk/world
@@ -279,15 +288,6 @@ if [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
         cp "${tmp}/nerdctl/bin/${bin}" "${tmp}/usr/local/bin/${bin}"
         chmod u+s "${tmp}/usr/local/bin/${bin}"
     done
-
-    if [ -r /home/build/buildkit.tar.gz ]; then
-        mkdir -p "${tmp}/buildkit"
-        tar xz -C "${tmp}/buildkit" -f /home/build/buildkit.tar.gz
-        for bin in "${tmp}/buildkit/bin"/* ; do
-            cp "${bin}" "${tmp}/usr/local/bin/${bin##*/}"
-            chmod u+s "${tmp}/usr/local/bin/${bin##*/}"
-        done
-    fi
     if [ "${LIMA_INSTALL_NERDCTL_LIBEXEC}" == "true" ]; then
         LIBEXEC=/usr/local/libexec/nerdctl
         mkdir -p "${tmp}${LIBEXEC}"
