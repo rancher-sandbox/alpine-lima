@@ -315,15 +315,6 @@ if [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
         cp "${tmp}/nerdctl/bin/${bin}" "${tmp}/usr/local/bin/${bin}"
         chmod u+s "${tmp}/usr/local/bin/${bin}"
     done
-
-    if [ -r /home/build/buildkit.tar.gz ]; then
-        mkdir -p "${tmp}/buildkit"
-        tar xz -C "${tmp}/buildkit" -f /home/build/buildkit.tar.gz
-        for bin in "${tmp}/buildkit/bin"/* ; do
-            cp "${bin}" "${tmp}/usr/local/bin/${bin##*/}"
-            chmod u+s "${tmp}/usr/local/bin/${bin##*/}"
-        done
-    fi
     if [ "${LIMA_INSTALL_NERDCTL_LIBEXEC}" == "true" ]; then
         LIBEXEC=/usr/local/libexec/nerdctl
         mkdir -p "${tmp}${LIBEXEC}"
