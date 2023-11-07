@@ -32,6 +32,7 @@ RUN \
   mkdir -p /home/build/packages/lima/${ARCH} && \
   cd /home/build/packages/lima/${ARCH} && \
   apk fetch mkcert --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing && \
+  apk fetch docker --no-cache --recursive --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community && \
   apk index -o APKINDEX.tar.gz *.apk && \
   abuild-sign APKINDEX.tar.gz
 
