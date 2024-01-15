@@ -103,9 +103,6 @@ EOF
 
 rc_add lima-overlay default
 
-mkdir -p "$tmp"/etc/pam.d
-cp /home/build/sshd.pam "${tmp}/etc/pam.d/sshd"
-
 if [ "${LIMA_INSTALL_LIMA_INIT}" == "true" ]; then
     rc_add lima-init default
     rc_add lima-init-local default
@@ -318,6 +315,10 @@ fi
 if [ "${LIMA_INSTALL_TINI}" == "true" ]; then
     echo tini-static >> "$tmp"/etc/apk/world
     ln -sf /sbin/tini-static "$tmp"/usr/bin/tini
+fi
+
+if [ "${LIMA_INSTALL_TZDATA}" == "true" ]; then
+    echo tzdata >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_CRI_DOCKERD}" == "true" ]; then
