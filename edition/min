@@ -24,5 +24,3 @@ export LIMA_INSTALL_SSHFS=false
 export LIMA_INSTALL_TINI=false
 export LIMA_INSTALL_TZDATA=false
 export LIMA_INSTALL_ZSTD=false
-
-export LIMA_CGROUP_MODE=hybrid
