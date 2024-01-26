@@ -301,7 +301,7 @@ EOF
 fi
 
 if [ "${LIMA_INSTALL_OPENRESTY}" == "true" ]; then
-    echo "openresty" >> "$tmp"/etc/apk/world
+    echo "rd-openresty" >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_OPENSSH_SFTP_SERVER}" == "true" ]; then
