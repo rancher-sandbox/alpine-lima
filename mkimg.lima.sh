@@ -10,7 +10,7 @@ profile_lima() {
 	initfs_cmdline="modules=loop,squashfs,sd-mod,usb-storage"
 	kernel_addons=
 	kernel_flavors="virt"
-	kernel_cmdline="console=tty0 console=ttyS0,115200"
+	kernel_cmdline="console=hvc0 console=tty0 console=ttyS0,115200"
 	syslinux_serial="0 115200"
 	apkovl="genapkovl-lima.sh"
 	apks="$apks openssh-server-pam"
@@ -62,7 +62,7 @@ profile_lima() {
             apks="$apks mkcert"
         fi
         if [ "${LIMA_INSTALL_OPENRESTY}" == "true" ]; then
-            apks="$apks openresty"
+            apks="$apks rd-openresty"
         fi
         if [ "${LIMA_INSTALL_OPENSSH_SFTP_SERVER=true}" == "true" ]; then
             apks="$apks openssh-sftp-server"
@@ -75,6 +75,9 @@ profile_lima() {
         fi
         if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
             apks="$apks iptables ip6tables"
+        fi
+        if [ "${LIMA_INSTALL_TZDATA}" == "true" ]; then
+            apks="$apks tzdata"
         fi
         if [ "${LIMA_INSTALL_ZSTD}" == "true" ]; then
             apks="$apks zstd"

@@ -6,7 +6,7 @@ FROM ${BINFMT_IMAGE} as binfmt
 FROM alpine:${ALPINE_VERSION}
 
 ARG ARCH=x86_64
-ARG OPENRESTY_VERSION=0.0.1
+ARG OPENRESTY_VERSION=0.0.2
 
 RUN \
   apk add alpine-sdk build-base apk-tools alpine-conf busybox \

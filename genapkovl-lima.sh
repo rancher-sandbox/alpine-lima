@@ -28,13 +28,13 @@ tmp="$(mktemp -d)"
 trap cleanup EXIT
 
 mkdir -p "$tmp"/etc
+makefile root:root 0644 "$tmp"/etc/fstab <<EOF
+# /etc/fstab
+EOF
+
 makefile root:root 0644 "$tmp"/etc/hostname <<EOF
 $HOSTNAME
 EOF
-
-if [ "$LIMA_CGROUP_MODE" != "hybrid" ]; then
-    sed -E "s/#(rc_cgroup_mode).*/\1=\"$LIMA_CGROUP_MODE\"/" /etc/rc.conf >"$tmp"/etc/rc.conf
-fi
 
 mkdir -p "$tmp"/etc/network
 makefile root:root 0644 "$tmp"/etc/network/interfaces <<EOF
@@ -103,9 +103,6 @@ EOF
 
 rc_add lima-overlay default
 
-mkdir -p "$tmp"/etc/pam.d
-cp /home/build/sshd.pam "${tmp}/etc/pam.d/sshd"
-
 if [ "${LIMA_INSTALL_LIMA_INIT}" == "true" ]; then
     rc_add lima-init default
     rc_add lima-init-local default
@@ -155,15 +152,6 @@ fi
 if [ "${LIMA_INSTALL_CLOUD_UTILS_GROWPART}" == "true" ]; then
     echo cloud-utils-growpart >> "$tmp"/etc/apk/world
     echo partx >> "$tmp"/etc/apk/world
-fi
-
-if [ "${LIMA_VARIANT_ID}" == "rd" ]; then
-    # XXX HACK: Don't create OpenRC cgroups namespace; it breaks buildkit 0.12+
-    # See also https://github.com/moby/buildkit/issues/4108
-    # We override /etc/init.d/cgroups to create a hybrid-style cgroups mount
-    # but without the "openrc" hierachy.
-    cp /home/build/cgroups.openrc "${tmp}/etc/init.d/cgroups"
-    chmod a+x "${tmp}/etc/init.d/cgroups"
 fi
 
 if [ "${LIMA_INSTALL_DOCKER}" == "true" ]; then
@@ -300,7 +288,7 @@ EOF
 fi
 
 if [ "${LIMA_INSTALL_OPENRESTY}" == "true" ]; then
-    echo "openresty" >> "$tmp"/etc/apk/world
+    echo "rd-openresty" >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_OPENSSH_SFTP_SERVER}" == "true" ]; then
@@ -318,6 +306,10 @@ fi
 if [ "${LIMA_INSTALL_TINI}" == "true" ]; then
     echo tini-static >> "$tmp"/etc/apk/world
     ln -sf /sbin/tini-static "$tmp"/usr/bin/tini
+fi
+
+if [ "${LIMA_INSTALL_TZDATA}" == "true" ]; then
+    echo tzdata >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_CRI_DOCKERD}" == "true" ]; then
