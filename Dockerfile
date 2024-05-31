@@ -32,7 +32,7 @@ RUN \
   mkdir -p /home/build/packages/lima/${ARCH} && \
   cd /home/build/packages/lima/${ARCH} && \
   apk fetch mkcert --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing && \
-  apk index -o APKINDEX.tar.gz *.apk && \
+  apk index -o APKINDEX.tar.gz --allow-untrusted *.apk && \
   abuild-sign APKINDEX.tar.gz
 
 WORKDIR /home/build/aports/scripts
