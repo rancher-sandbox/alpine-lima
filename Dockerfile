@@ -30,9 +30,11 @@ ADD openresty-v${OPENRESTY_VERSION}-${ARCH}.tar /home/build/packages/lima
 # mkcert is only available in the "testing" repo from the "edge" branch
 RUN \
   mkdir -p /home/build/packages/lima/${ARCH} && \
-  cd /home/build/packages/lima/${ARCH} && \
+  cd /home/build/packages/lima && \
+  mv *.pub /etc/apk/keys && \
+  cd ${ARCH} && \
   apk fetch mkcert --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing && \
-  apk index -o APKINDEX.tar.gz --allow-untrusted *.apk && \
+  apk index -o APKINDEX.tar.gz *.apk && \
   abuild-sign APKINDEX.tar.gz
 
 WORKDIR /home/build/aports/scripts
