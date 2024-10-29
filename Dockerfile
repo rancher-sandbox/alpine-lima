@@ -8,13 +8,13 @@ FROM alpine:${ALPINE_VERSION}
 ARG ARCH=x86_64
 ARG OPENRESTY_VERSION=0.0.2
 
-RUN \
-  apk add alpine-sdk build-base apk-tools alpine-conf busybox \
+RUN apk add alpine-sdk build-base apk-tools alpine-conf busybox \
   fakeroot xorriso squashfs-tools sudo \
   mtools dosfstools grub-efi
 
 # syslinux is missing for aarch64
-RUN if [ "${ARCH}" = "x86_64" ]; then apk add syslinux; fi
+ARG TARGETARCH
+RUN if [ "${TARGETARCH}" = "amd64" ]; then apk add syslinux; fi
 
 COPY --from=binfmt /usr/bin /binfmt
 
