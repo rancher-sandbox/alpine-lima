@@ -1,4 +1,4 @@
-ALPINE_VERSION ?= 3.20.0
+ALPINE_VERSION ?= 3.20.3
 REPO_VERSION ?= $(shell echo "$(ALPINE_VERSION)" | sed -E 's/^([0-9]+\.[0-9]+).*/v\1/')
 GIT_TAG ?= $(shell echo "v$(ALPINE_VERSION)" | sed 's/^vedge$$/origin\/master/')
 BUILD_ID ?= $(shell git describe --tags)
@@ -21,12 +21,12 @@ ARCH_ALIAS_x86_64 = amd64
 ARCH_ALIAS_aarch64 = arm64
 ARCH_ALIAS = $(shell echo "$(ARCH_ALIAS_$(ARCH))")
 
-NERDCTL_VERSION=1.7.7
-QEMU_VERSION=v8.1.5
-CRI_DOCKERD_VERSION=0.3.15
-CRI_DOCKERD_ORG=Mirantis
 BINFMT_IMAGE=tonistiigi/binfmt:qemu-$(QEMU_VERSION)
+CRI_DOCKERD_ORG=Mirantis
+CRI_DOCKERD_VERSION=0.3.15
+NERDCTL_VERSION=2.0.0-rc.3
 OPENRESTY_VERSION=0.0.5
+QEMU_VERSION=v8.1.5
 
 .PHONY: mkimage
 mkimage: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
@@ -43,8 +43,21 @@ mkimage: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
 
 .PHONY: iso
 iso:
-	ALPINE_VERSION=$(ALPINE_VERSION) NERDCTL_VERSION=$(NERDCTL_VERSION) QEMU_VERSION=$(QEMU_VERSION) CRI_DOCKERD_VERSION=$(CRI_DOCKERD_VERSION) REPO_VERSION=$(REPO_VERSION) EDITION=$(EDITION) BUILD_ID=$(BUILD_ID) ARCH=$(ARCH) ARCH_ALIAS=$(ARCH_ALIAS) ./build.sh
+	ALPINE_VERSION=$(ALPINE_VERSION) \
+	CRI_DOCKERD_VERSION=$(CRI_DOCKERD_VERSION) \
+	NERDCTL_VERSION=$(NERDCTL_VERSION) \
+	QEMU_VERSION=$(QEMU_VERSION) \
+	ARCH=$(ARCH) \
+	ARCH_ALIAS=$(ARCH_ALIAS) \
+	BUILD_ID=$(BUILD_ID) \
+	EDITION=$(EDITION) \
+	REPO_VERSION=$(REPO_VERSION) \
+	./build.sh
 
+iso: cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH)
+cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH):
+	curl -o $@ -Ls https://github.com/$(CRI_DOCKERD_ORG)/cri-dockerd/releases/download/v$(CRI_DOCKERD_VERSION)/cri-dockerd-$(CRI_DOCKERD_VERSION).$(ARCH_ALIAS).tgz
+	curl -o $@.LICENSE -Ls https://raw.githubusercontent.com/$(CRI_DOCKERD_ORG)/cri-dockerd/v$(CRI_DOCKERD_VERSION)/LICENSE
 
 iso: nerdctl-full-$(NERDCTL_VERSION)-$(ARCH)
 nerdctl-full-$(NERDCTL_VERSION)-$(ARCH):
@@ -57,11 +70,6 @@ openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar:
 iso: qemu-$(QEMU_VERSION)-copying
 qemu-$(QEMU_VERSION)-copying:
 	curl -o $@ -Ls https://raw.githubusercontent.com/qemu/qemu/$(QEMU_VERSION)/COPYING
-
-iso: cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH)
-cri-dockerd-$(CRI_DOCKERD_VERSION)-$(ARCH):
-	curl -o $@ -Ls https://github.com/$(CRI_DOCKERD_ORG)/cri-dockerd/releases/download/v$(CRI_DOCKERD_VERSION)/cri-dockerd-$(CRI_DOCKERD_VERSION).$(ARCH_ALIAS).tgz
-	curl -o $@.LICENSE -Ls https://raw.githubusercontent.com/$(CRI_DOCKERD_ORG)/cri-dockerd/v$(CRI_DOCKERD_VERSION)/LICENSE
 
 .PHONY: lima
 lima:

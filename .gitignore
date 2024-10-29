@@ -3,7 +3,8 @@
 /ci.yaml
 /rd.yaml
 /std.yaml
+# downloaded assets
+/cri-dockerd-*
 /nerdctl-*
 /openresty-*
 /qemu-*
-/cri-dockerd-*

@@ -8,7 +8,7 @@ on:
   pull_request:
 
 env:
-  ALPINE_VERSION: 3.20.0
+  ALPINE_VERSION: 3.20.3
   DOCKER_BUILDKIT: 1
 
 jobs:
@@ -43,4 +43,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         tag="${GITHUB_REF##*/}"
-        gh release create "${tag}" --draft --title "${tag}" iso/alpine-lima-rd-*
+        gh release create --draft --title "${tag}" "${tag}" iso/alpine-lima-rd-*
