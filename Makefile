@@ -1,4 +1,4 @@
-ALPINE_VERSION ?= 3.20.3
+ALPINE_VERSION ?= 3.21.3
 REPO_VERSION ?= $(shell echo "$(ALPINE_VERSION)" | sed -E 's/^([0-9]+\.[0-9]+).*/v\1/')
 GIT_TAG ?= $(shell echo "v$(ALPINE_VERSION)" | sed 's/^vedge$$/origin\/master/')
 BUILD_ID ?= $(shell git describe --tags)
@@ -23,10 +23,10 @@ ARCH_ALIAS = $(shell echo "$(ARCH_ALIAS_$(ARCH))")
 
 BINFMT_IMAGE=tonistiigi/binfmt:qemu-$(QEMU_VERSION)
 CRI_DOCKERD_ORG=Mirantis
-CRI_DOCKERD_VERSION=0.3.16
-NERDCTL_VERSION=2.0.3
+CRI_DOCKERD_VERSION=0.3.17
+NERDCTL_VERSION=2.0.4
 OPENRESTY_VERSION=0.0.5
-QEMU_VERSION=v8.1.5
+QEMU_VERSION=v9.2.2-52
 
 .PHONY: mkimage
 mkimage: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
