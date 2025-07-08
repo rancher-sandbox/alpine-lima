@@ -48,6 +48,7 @@ EOF
 mkdir -p "$tmp"/etc/apk
 makefile root:root 0644 "$tmp"/etc/apk/world <<EOF
 alpine-base
+iproute2
 openssh-server-pam
 EOF
 
@@ -261,6 +262,10 @@ if [ "${LIMA_INSTALL_GNUTAR}" == "true" ]; then
     echo "tar" >> "$tmp"/etc/apk/world
 fi
 
+if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
+    echo "iptables ip6tables" >> "$tmp"/etc/apk/world
+fi
+
 if [ "${LIMA_INSTALL_K3S}" == "true" ]; then
     echo "k3s" >> "$tmp"/etc/apk/world
     rc_add k3s default
@@ -268,10 +273,6 @@ fi
 
 if [ "${LIMA_INSTALL_LOGROTATE}" == "true" ]; then
     echo "logrotate" >> "$tmp"/etc/apk/world
-fi
-
-if [ "${LIMA_INSTALL_IPTABLES}" == "true" ] || [ "${LIMA_INSTALL_NERDCTL_FULL}" == "true" ]; then
-    echo "iptables ip6tables" >> "$tmp"/etc/apk/world
 fi
 
 if [ "${LIMA_INSTALL_MKCERT}" == "true" ]; then
