@@ -61,6 +61,10 @@ awk -f- "${LIMA_CIDATA_MNT}"/user-data <<'EOF' >>"${MOUNT_SCRIPT}"
     sub(/^ *- \[/, "")
     sub(/"?\] *$/, "")
     gsub("\"?, \"?", FS)
+    if ($3 == "sshfs") {
+        # Workaround for RD #9478: sshfs mounts should not be handled here.
+        next
+    }
     printf "mkdir -p \"%s\"\n", $2
     printf "mount -t %s -o \"%s\" %s \"%s\"\n", $3, $4, $1, $2
     next
