@@ -37,5 +37,7 @@ RUN \
   apk index -o APKINDEX.tar.gz *.apk && \
   abuild-sign APKINDEX.tar.gz
 
+# Remove --no-chown which is deprecated in apk 3.0 as alias for --usermode (disallowed as root)
+RUN sed -i 's/--initdb --no-chown/--initdb/' /home/build/aports/scripts/mkimage.sh
 WORKDIR /home/build/aports/scripts
 ENTRYPOINT ["sh", "./mkimage.sh"]
