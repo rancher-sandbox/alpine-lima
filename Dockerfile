@@ -39,5 +39,18 @@ RUN \
 
 # Remove --no-chown which is deprecated in apk 3.0 as alias for --usermode (disallowed as root)
 RUN sed -i 's/--initdb --no-chown/--initdb/' /home/build/aports/scripts/mkimage.sh
+
+# Strip kernel modules that are unused in the VM but expose known CVEs
+# (CVE-2026-43284 dirtyfrag esp4/esp6; CVE-2026-43500 dirtyfrag rxrpc;
+# CVE-2026-31431 copy.fail algif_aead). update-kernel has no exclude
+# flag, so we inject a hook before its `cp -a ... $MODLOOP` line; depmod
+# re-runs to keep modules.dep consistent.
+RUN cat > /usr/local/lib/strip-exploit-modules.sh <<'EOF'
+for mod in esp4 esp6 rxrpc algif_aead; do
+    find "$ROOTFS/lib/modules/$KVER/kernel" -name "$mod.ko*" -delete
+done
+$MOCK depmod -b "$ROOTFS" "$KVER"
+EOF
+RUN sed -i 's|^cp -a $ROOTFS/lib/modules $MODLOOP$|. /usr/local/lib/strip-exploit-modules.sh\n&|' /usr/sbin/update-kernel
 WORKDIR /home/build/aports/scripts
 ENTRYPOINT ["sh", "./mkimage.sh"]
