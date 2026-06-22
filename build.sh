@@ -34,6 +34,7 @@ ${DOCKER} run --rm \
     --repository "/home/build/packages/lima" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/main" \
     --repository "http://dl-cdn.alpinelinux.org/alpine/${REPO_VERSION}/community" \
+    --repository "@edge http://dl-cdn.alpinelinux.org/alpine/edge/community" \
     --profile lima
 
 ISO="alpine-lima-${EDITION}-${ALPINE_VERSION}-${ARCH}.iso"
