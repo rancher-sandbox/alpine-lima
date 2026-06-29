@@ -40,6 +40,14 @@ RUN \
 # Remove --no-chown which is deprecated in apk 3.0 as alias for --usermode (disallowed as root)
 RUN sed -i 's/--initdb --no-chown/--initdb/' /home/build/aports/scripts/mkimage.sh
 
+# On x86_64, rebuild linux-virt with legacy iptables restored (Alpine dropped it
+# there in 3.23 but keeps it on aarch64); needed by containers that ship only the
+# legacy iptables binary, e.g. rancher/rancher.
+# https://github.com/rancher/rancher/issues/54862
+COPY kernel-legacy-iptables.config /home/build/kernel-legacy-iptables.config
+COPY build-legacy-iptables-kernel.sh /home/build/build-legacy-iptables-kernel.sh
+RUN if [ "${ARCH}" = "x86_64" ]; then sh /home/build/build-legacy-iptables-kernel.sh; fi
+
 # Strip kernel modules that are unused in the VM but expose known CVEs
 # (CVE-2026-43284 dirtyfrag esp4/esp6; CVE-2026-43500 dirtyfrag rxrpc;
 # CVE-2026-31431 copy.fail algif_aead). update-kernel has no exclude
