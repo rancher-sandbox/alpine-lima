@@ -30,13 +30,13 @@ profile_lima() {
             apks="$apks cni-plugin-flannel"
         fi
         if [ "${LIMA_INSTALL_CTR}" == "true" ]; then
-            apks="$apks containerd-ctr@edge"
+            apks="$apks containerd-ctr"
         fi
         if [ "${LIMA_INSTALL_CURL}" == "true" ]; then
             apks="$apks curl"
         fi
         if [ "${LIMA_INSTALL_DOCKER}" == "true" ]; then
-            apks="$apks libseccomp runc containerd@edge tini-static device-mapper-libs"
+            apks="$apks libseccomp runc containerd tini-static device-mapper-libs"
             apks="$apks docker-engine docker-openrc docker-cli docker"
             apks="$apks socat xz"
         fi
