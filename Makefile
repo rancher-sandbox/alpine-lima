@@ -1,6 +1,11 @@
 ALPINE_VERSION ?= 3.24.1
 REPO_VERSION ?= $(shell echo "$(ALPINE_VERSION)" | sed -E 's/^([0-9]+\.[0-9]+).*/v\1/')
 GIT_TAG ?= $(shell echo "v$(ALPINE_VERSION)" | sed 's/^vedge$$/origin\/master/')
+# aports commit whose main/linux-lts builds the same linux-virt version that
+# Alpine's $(REPO_VERSION) repo ships. The mkimage target overlays that
+# directory onto the GIT_TAG checkout, and undoes the overlay first so a
+# changed GIT_TAG can still be checked out.
+LINUX_LTS_COMMIT ?= 5fe63f789de75f6a71001cf2de771f922bedd0d2
 BUILD_ID ?= $(shell git describe --tags)
 DOCKER ?= docker
 
@@ -30,7 +35,10 @@ QEMU_VERSION=v9.2.2-52
 
 .PHONY: mkimage
 mkimage: openresty-v$(OPENRESTY_VERSION)-$(ARCH).tar
+	cd src/aports && git checkout --no-overlay HEAD -- main/linux-lts
 	cd src/aports && git fetch && git checkout $(GIT_TAG)
+	cd src/aports && { git cat-file -e $(LINUX_LTS_COMMIT)^{commit} || git fetch --depth=1 origin $(LINUX_LTS_COMMIT); }
+	cd src/aports && git checkout --no-overlay $(LINUX_LTS_COMMIT) -- main/linux-lts
 	$(DOCKER) build \
 		--progress plain --no-cache \
 		--tag mkimage:$(ALPINE_VERSION)-$(ARCH) \
