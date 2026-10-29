@@ -5,7 +5,7 @@ GIT_TAG ?= $(shell echo "v$(ALPINE_VERSION)" | sed 's/^vedge$$/origin\/master/')
 # Alpine's $(REPO_VERSION) repo ships. The mkimage target overlays that
 # directory onto the GIT_TAG checkout, and undoes the overlay first so a
 # changed GIT_TAG can still be checked out.
-LINUX_LTS_COMMIT ?= 5fe63f789de75f6a71001cf2de771f922bedd0d2
+LINUX_LTS_COMMIT ?= 36d3ca8442f7d978ad15bf4be74b7a4ff7bf815e
 BUILD_ID ?= $(shell git describe --tags)
 DOCKER ?= docker
 
