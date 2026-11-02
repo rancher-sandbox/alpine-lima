@@ -14,8 +14,7 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    # The x86_64 kernel compile (build-patched-kernel.sh) needs the extra time.
-    timeout-minutes: 180
+    timeout-minutes: 60
 
     steps:
     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
